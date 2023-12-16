@@ -1,25 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import List from './components/List';
+import Button from './components/Button';
 
-function App() {
+const App = () => {
+  const initialTasks = [
+    { id: 1, task: 'coding' },
+    { id: 2, task: 'eat' },
+    { id: 3, task: 'sleep' },
+  ];
+  const [tasks, setTasks] = useState(initialTasks);
+  const [addInput, setAddInput] = useState('');
+  const [search, setSearch] = useState('');
+
+  const handleAddInputChange = (e) => {
+    setAddInput(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const addTask = () => {
+    if (addInput.trim() !== '') {
+      const newTask = {
+        id: tasks.length + 1,
+        task: addInput.trim(),
+      };
+
+      setTasks([...tasks, newTask]);
+      setAddInput('');
+    }
+  };
+
+  useEffect(() => {
+    const filteredTasks = tasks.filter((task) =>
+      task.task.toLowerCase().includes(search.toLowerCase())
+    );
+    setTasks(filteredTasks);
+  }, [search]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Task Manager</h1>
+      <input
+        type="text"
+        value={search}
+        onChange={handleSearchChange}
+        placeholder="Search tasks"
+      />
+      <input
+        type="text"
+        value={addInput}
+        onChange={handleAddInputChange}
+        placeholder="Add task"
+      />
+      <List tasks={tasks} />
+      <Button text="Add Task" onClick={addTask} />
     </div>
   );
-}
+};
 
 export default App;
